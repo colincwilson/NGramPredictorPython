@@ -1,13 +1,16 @@
 #!/usr/bin/python
 import kenlm
 
+
 class VocabTrieNode:
-    def __init__(self, info = None):
+
+    def __init__(self, info=None):
         self.children = dict()
         self.info = info
 
 
 class VocabTrie(object):
+
     def __init__(self):
         self.root = VocabTrieNode()
 
@@ -41,10 +44,6 @@ class VocabTrie(object):
                 return False
         return False
 
-
-
-
-
     def get_words_with_prefix(self, prefix, model, state_in, state_out):
         suggestion_list = []
         words = []
@@ -68,7 +67,8 @@ class VocabTrie(object):
         if current == self.root:
             # If current node is the root node then add all the children of
             # the root node to the queue
-            for key, item in current.children.iteritems():
+            #for key, item in current.children.iteritems():
+            for key, item in current.children.items():
                 queue.append(item)
         # Else add just the current node in the queue
         else:
@@ -93,11 +93,11 @@ class VocabTrie(object):
                 suggestion_list.append(pair)
 
             # Add all the children of the node to the queue
-            for key, item in temp.children.iteritems():
+            #for key, item in temp.children.iteritems():
+            for key, item in temp.children.items():
                 queue.append(item)
 
         return suggestion_list
-
 
 
 def main():
@@ -117,7 +117,6 @@ def main():
     print(vt.contains_word('hell'))
 
     print(vt.get_words_with_prefix('he', model, state_in, state_out))
-
 
 
 if __name__ == "__main__":
