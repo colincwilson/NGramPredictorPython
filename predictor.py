@@ -7,7 +7,7 @@ import vocabtrie
 
 class WordPredictor:
 
-    def __init__(self, lm_filename, vocab_filename):
+    def __init__(self, lm_filename, vocab_filename, punct_filename):
         #self.lm_filename = lm_filename
         self.vocab_filename = vocab_filename
         self.language_model = kenlm.LanguageModel(lm_filename)
@@ -17,8 +17,9 @@ class WordPredictor:
         self.trie_table = {}
         self.trie_table[''] = self.create_new_trie(vocab_filename)
 
-        # Omit the first two dots and the slash in the path if you are running predictor.py
-        self.token_list = self.get_punctuation_tokens('../resources/tokens.txt')
+        self.token_list = self.get_punctuation_tokens(punct_filename)
+
+        self.verbose = True
 
     # Given a filename, this method creates a new trie data
     # structure for the words in the file
@@ -143,8 +144,9 @@ class WordPredictor:
         context_words = context.split()
         for w in context_words:
             #print('Context', '{0}\t{1}'.format(model.BaseScore(state_in, w.lower(), state_out), w.lower()))
-            print('Context',
-                  '{0}\t{1}'.format(model.BaseScore(state_in, w, state_out), w))
+            if self.verbose:
+                print('Context', '{0}\t{1}'.format( \
+                        model.BaseScore(state_in, w, state_out), w))
             state_in = state_out
             state_out = kenlm.State()
 
@@ -258,7 +260,8 @@ class WordPredictor:
 def main():
     lm_filename = 'resources/lm_word_medium.kenlm'
     vocab_filename = 'resources/vocab_100k'
-    word_predictor = WordPredictor(lm_filename, vocab_filename)
+    punct_filename = 'resources/tokens.txt'
+    word_predictor = WordPredictor(lm_filename, vocab_filename, punct_filename)
 
     #print(predictor.create_char_list_from_vocab(vocab_filename))
 
