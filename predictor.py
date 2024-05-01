@@ -16,6 +16,7 @@ class WordPredictor:
             '', vocab_filename)
         self.trie_table = {}
         self.trie_table[''] = self.create_new_trie(vocab_filename)
+        # [CW] Note that '' is the default vocabulary id (vocab_id).
 
         self.token_list = self.get_punctuation_tokens(punct_filename)
 
@@ -144,11 +145,17 @@ class WordPredictor:
         context_words = context.split()
         for w in context_words:
             #print('Context', '{0}\t{1}'.format(model.BaseScore(state_in, w.lower(), state_out), w.lower()))
+            # [CW] Original -- does not update state if not verbose!
+            #if self.verbose:
+            #    print('Context', '{0}\t{1}'.format( \
+            #            model.BaseScore(state_in, w, state_out), w))
+            #state_in = state_out
+            #state_out = kenlm.State()
+            # [CW] Fixed.
+            logprob = model.BaseScore(state_in, w, state_out)
+            state_in, state_out = state_out, state_in
             if self.verbose:
-                print('Context', '{0}\t{1}'.format( \
-                        model.BaseScore(state_in, w, state_out), w))
-            state_in = state_out
-            state_out = kenlm.State()
+                print(f'Context {logprob}\t{w}')
 
         return state_in, state_out
 
@@ -194,8 +201,9 @@ class WordPredictor:
                 words_with_logprob, most_prob_word, most_prob_word_log)
 
             #sort the most probable words for this prefix
-            likely_words_with_logprob = sorted(
-                words_with_logprob, key=lambda x: float(x[1]), reverse=True)
+            likely_words_with_logprob = sorted(words_with_logprob,
+                                               key=lambda x: float(x[1]),
+                                               reverse=True)
 
             #add the most probable words to the suggestion list for this prefix
             if num_predictions < 1:
