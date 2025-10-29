@@ -1,7 +1,10 @@
+# conda activate braille
 import sys
 import kenlm
 from pathlib import Path
 
+# # # # # # # # # #
+# Pretrained kenlm n-gram models.
 lm2_filename = Path.home() / \
         f'Languages/00English/Wiki-Text-103/wiki_2gram.binary'
 model2 = kenlm.Model(str(lm2_filename))
@@ -10,26 +13,28 @@ lm5_filename = Path.home() / \
         f'Languages/00English/Wiki-Text-103/wiki_5gram.binary'
 model5 = kenlm.Model(str(lm5_filename))
 
+# # # # # # # # # #
+# Score words in sentence with models.
 sent1 = 'I shopped at the store .'
 print(list(model2.full_scores(sent1)))
 
 print(list(model5.full_scores(sent1)))
 
-#sys.exit(0)
-
+# # # # # # # # # #
 # Word predictor module.
 # https://github.com/kdv123/TextPredictorPython
-textpredict_dir = Path.home() / \
-    'Projects/braille_reading/extern/TextPredictorPython'
-sys.path.append(str(textpredict_dir))
+textpredict_home = Path.home() / \
+    'Library/Python/TextPredictorPython'
+sys.path.append(str(textpredict_home))
 from predictor import WordPredictor
 
+# Most probable words in context (optionally with specified prefix).
 #lm_filename = 'resources/lm_word_medium.kenlm'
 for lm in ['wiki_2gram', 'wiki_3gram', 'wiki_4gram', 'wiki_5gram']:
     lm_filename = Path.home() / \
         f'Languages/00English/Wiki-Text-103/{lm}.binary'
-    vocab_filename = 'resources/vocab_100k'
-    punct_filename = 'resources/tokens.txt'
+    vocab_filename = str(textpredict_home / 'resources/vocab_100k')
+    punct_filename = str(textpredict_home / 'resources/tokens.txt')
     model = WordPredictor(\
         str(lm_filename), vocab_filename, punct_filename)
     model.verbose = False
@@ -48,6 +53,7 @@ for lm in ['wiki_2gram', 'wiki_3gram', 'wiki_4gram', 'wiki_5gram']:
                                      context=context,
                                      num_predictions=5))
     print()
+
 #print(predictor.create_char_list_from_vocab(vocab_filename))
 
 #words = predictor.get_words_with_context('s', 'abra ka dabra', '', 3, -float('inf'))
