@@ -21,10 +21,10 @@ print(list(model2.full_scores(sent1)))
 print(list(model5.full_scores(sent1)))
 
 # # # # # # # # # #
-# Word predictor module.
-# https://github.com/kdv123/TextPredictorPython
+# N-gram predictor module.
+# (forked from https://github.com/kdv123/TextPredictorPython)
 textpredict_home = Path.home() / \
-    'Library/Python/TextPredictorPython'
+    'Library/Python/NGramPredictorPython'
 sys.path.append(str(textpredict_home))
 from predictor import WordPredictor
 
